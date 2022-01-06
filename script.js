@@ -11,13 +11,13 @@ ctx.lineCap = 'round';
 
 /** SETTINGS **/
 /** COLORS **/
-let BACKGROUND_COLOR = 'black';
+let BACKGROUND_COLOR = '#000000';
 
-let TREE_COLOR = 'white';
-let TREE_SHADOW_COLOR = 'blue';
+let TREE_COLOR = '#ffffff';
+let TREE_SHADOW_COLOR = '#004CB8';
 
-let SNOWFLAKE_COLOR = 'white';
-let SNOWFLAKE_SHADOW_COLOR = 'blue';
+let SNOWFLAKE_COLOR = '#ffffff';
+let SNOWFLAKE_SHADOW_COLOR = '#004CB8';
 
 /** TEXT **/
 let TEXT = 'С Новым 2022 Годом!';
@@ -27,9 +27,11 @@ const FONT_FAMILY = 'Press Start 2P';
 
 /** SNOW **/
 let SNOWFLAKES_COUNT = 100;
+let SNOW_SPEED = 1;
 
 /** WIND **/
 let WIND_POWER = 1;
+let WIND_SPEED = 1;
 
 /** TREE MAPS **/
 const FIRST_TREE_MAP = {middle: {length: 10, size: 4, right: {length: 30, left: {length: 20, left: {length: 15, left: {length: 20, left: {length: 10, right: {length: 25, right: {length: 20, left: {length: 1, size: 2, left: {length: 20, right: {length: 38, right: {length: 8}}}}, middle: {length: 5, left: {length: 1, size: 2, left: {length: 19, right: {length: 30, right: {length: 8, right: {length: 8}}}}}, middle: {length: 5, left: {length: 1, size: 2, left: {length: 17, right: {length: 20, right: { length: 1 }}}}, middle: {length: 12, left: { length: 8 }}}}}}}}}, middle: {length: 12, left: {length: 10, right: {size: 2, length: 20, left: {length: 15,}}, middle: {length: 20, left: {length: 25, size: 2, right: {length: 22, left: {length: 10, right: {length: 30}}}}, middle: {length: 10, left: {length: 15, right: { length: 25 }}, middle: {length: 15, right: {length: 20, middle: {length: 30, size: 2, left: {length: 30}}, left: {length: 5, right: {length: 24, size: 2, left: {length: 24, left: {length: 10, right: {length: 8, right: {length: 1}}}}}, middle: {length: 5, right: {length: 18, size: 2, left: {length: 15, left: {length: 5, left: {length: 1, left: {length: 5}}}}}, middle: {length: 10, left: {length: 25, right: {length: 5, right: {length: 5}}}}}}}}}}}}}}}};
@@ -119,8 +121,8 @@ class Snowflake {
 
     update() {
         const windDegreeCoefficient = Math.cos(WIND * Math.PI / 180) * WIND_POWER;
-        this.y += this.ySpeed;
-        this.x += this.xSpeed * windDegreeCoefficient;
+        this.y += this.ySpeed * SNOW_SPEED;
+        this.x += this.xSpeed * SNOW_SPEED * windDegreeCoefficient;
         if (this.y > HEIGHT + this.size * 2) {
             this.y = 0;
             this.x = Math.random() * WIDTH;
@@ -155,7 +157,7 @@ const trees = [
 function update(timestamp) {
     snowflakes.forEach((item) => item.update());
     trees.forEach((item) => item.update());
-    WIND += 0.6;
+    WIND += WIND_SPEED;
     updateText(timestamp)
 }
 
@@ -186,7 +188,7 @@ function renderText() {
     ctx.font = `${WIDTH / 25}px "${FONT_FAMILY}"`;
     ctx.fillStyle = `hsl(${FONT_COLOR_HLS},100%,50%)`;
     ctx.shadowColor = `black`;
-    let text = TEXT.substr(0, TEXT_LENGTH) + (SHOW_SYMBOL ? '|' : TEXT.length === TEXT_LENGTH ? ' ' : '');
+    let text = TEXT.substr(0, TEXT_LENGTH) + (SHOW_SYMBOL ? '|' : ' ');
     const textWidth = ctx.measureText(text).width;
     ctx.fillText(text, (WIDTH - textWidth)/2, HEIGHT / 3)
 }
@@ -258,5 +260,60 @@ textInput.addEventListener('change', (e) => {
 const textIntervalInput = document.getElementById('textIntervalInput');
 textIntervalInput.value = TEXT_INPUT_INTERVAL;
 textIntervalInput.addEventListener('change', (e) => {
-    TEXT_INPUT_INTERVAL = e.target.value;
+    TEXT_INPUT_INTERVAL = Number(e.target.value);
+})
+
+const windPowerInput = document.getElementById('windPowerInput');
+windPowerInput.value = WIND_POWER;
+windPowerInput.addEventListener('change', (e) => {
+    WIND_POWER = Number(e.target.value);
+})
+
+const snowflakeCountInput = document.getElementById('snowflakeCountInput');
+snowflakeCountInput.value = SNOWFLAKES_COUNT;
+snowflakeCountInput.addEventListener('change', (e) => {
+    SNOWFLAKES_COUNT = Number(e.target.value);
+    snowflakes = createSnow(SNOWFLAKES_COUNT)
+})
+
+const backgroundColorInput = document.getElementById('backgroundColorInput');
+backgroundColorInput.value = BACKGROUND_COLOR;
+backgroundColorInput.addEventListener('change', (e) => {
+    BACKGROUND_COLOR = e.target.value;
+})
+
+const treeColorInput = document.getElementById('treeColorInput');
+treeColorInput.value = TREE_COLOR;
+treeColorInput.addEventListener('change', (e) => {
+    TREE_COLOR = e.target.value;
+})
+
+const snowColorInput = document.getElementById('snowColorInput');
+snowColorInput.value = SNOWFLAKE_COLOR;
+snowColorInput.addEventListener('change', (e) => {
+    SNOWFLAKE_COLOR = e.target.value;
+})
+
+const treeShadowColorInput = document.getElementById('treeShadowColorInput');
+treeShadowColorInput.value = TREE_SHADOW_COLOR;
+treeShadowColorInput.addEventListener('change', (e) => {
+    TREE_SHADOW_COLOR = e.target.value;
+})
+
+const snowShadowColorInput = document.getElementById('snowShadowColorInput');
+snowShadowColorInput.value = SNOWFLAKE_SHADOW_COLOR;
+snowShadowColorInput.addEventListener('change', (e) => {
+    SNOWFLAKE_SHADOW_COLOR = e.target.value;
+})
+
+const windSpeedInput = document.getElementById('windSpeedInput');
+windSpeedInput.value = WIND_SPEED;
+windSpeedInput.addEventListener('change', (e) => {
+    WIND_SPEED = Number(e.target.value)
+})
+
+const snowSpeedInput = document.getElementById('snowSpeedInput');
+snowSpeedInput.value = SNOW_SPEED;
+snowSpeedInput.addEventListener('change', (e) => {
+    SNOW_SPEED = Number(e.target.value)
 })
