@@ -1,0 +1,27 @@
+body {
+    margin: 0;
+    font-family: 'Press Start 2P', cursive;
+}
+canvas {
+    display: block
+}
+
+#settings {
+    position: fixed;
+    left: 4px;
+    top: 4px;
+    background-color: #fff;
+    width: 200px;
+    height: auto;
+    padding: 20px;
+    border-radius: 5px;
+    font-size: 10px;
+}
+
+#settings > div {
+    margin-bottom: 10px;
+}
+
+label input {
+    margin-top: 4px;
+}
