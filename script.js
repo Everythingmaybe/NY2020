@@ -257,6 +257,8 @@ window.addEventListener('resize', () => {
     WIDTH = canvas.width = window.innerWidth;
     HEIGHT = canvas.height = window.innerHeight;
     snowflakes = createSnow(SNOWFLAKES_COUNT);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
 })
 
 const textInput = document.getElementById('textInput');
