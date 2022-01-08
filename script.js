@@ -10,6 +10,9 @@ ctx.lineJoin = 'round';
 ctx.lineCap = 'round';
 
 /** SETTINGS **/
+/** SHADOWS **/
+let SHADOWS = true
+
 /** COLORS **/
 let BACKGROUND_COLOR = '#000000';
 
@@ -65,7 +68,7 @@ class TreeNode {
         this.size && (ctx.lineWidth = this.size);
         ctx.strokeStyle = TREE_COLOR;
         ctx.shadowColor = TREE_SHADOW_COLOR;
-        ctx.shadowBlur = 30;
+        SHADOWS && (ctx.shadowBlur = 30);
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.lineTo(0, -this.length);
@@ -80,10 +83,10 @@ class TreeNode {
         if (!this.left && !this.right && !this.middle && this.length) {
             const radius = ctx.lineWidth + ctx.lineWidth * Math.abs(Math.cos(this.coefficient * Math.PI / 180));
             ctx.strokeStyle = ctx.shadowColor = `hsl(${this.coefficient},100%,50%)`;
-            ctx.shadowBlur = 10;
+            SHADOWS && (ctx.shadowBlur = 10);
             if (this.star) {
                 ctx.lineWidth = radius * .8;
-                strokeStar(0, 0, radius * 2, 5, 2.5);
+                strokeStar(0, -radius * 1.5, 5, radius * 4, radius * 1.5);
             } else {
                 ctx.beginPath();
                 ctx.arc(0, -radius, radius, 0, 2 * Math.PI, false);
@@ -131,10 +134,10 @@ class Snowflake {
 
     render() {
         ctx.strokeStyle = SNOWFLAKE_COLOR;
-        ctx.lineWidth = this.size * 0.4;
-        ctx.shadowBlur = 10;
+        ctx.lineWidth = this.size * 0.2;
+        SHADOWS && (ctx.shadowBlur = 10);
         ctx.shadowColor = SNOWFLAKE_SHADOW_COLOR;
-        strokeStar(this.x, this.y, this.size, 10, 2)
+        strokeStar(this.x, this.y, 10, this.size, this.size * 0.5)
     }
 }
 
@@ -221,27 +224,33 @@ function createSnow(count) {
     for (let i = 0; i < count; i++) {
         const x = WIDTH * Math.random();
         const y = HEIGHT * Math.random();
-        const size = 10 * Math.random();
+        const size = 25 * Math.random();
         snowflakes.push(new Snowflake(x, y, size))
     }
     return snowflakes;
 }
 
-function strokeStar(x, y, r, n, inset) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.translate(x, y - r);
-    ctx.rotate(Math.PI / n);
-    ctx.moveTo(0,0-r);
-    for (let i = 0; i < n; i++) {
-        ctx.rotate(Math.PI / n);
-        ctx.lineTo(0, 0 - (r*inset));
-        ctx.rotate(Math.PI / n);
-        ctx.lineTo(0, 0 - r);
-    }
-    ctx.closePath();
-    ctx.stroke();
-    ctx.restore();
+function strokeStar(cx, cy, spikes, outerRadius, innerRadius) {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        let step = Math.PI / spikes;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - outerRadius)
+        for (let i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            ctx.lineTo(x, y)
+            rot += step
+
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            ctx.lineTo(x, y)
+            rot += step
+        }
+        ctx.lineTo(cx, cy - outerRadius)
+        ctx.closePath();
+        ctx.stroke();
 }
 
 window.addEventListener('resize', () => {
@@ -316,4 +325,11 @@ const snowSpeedInput = document.getElementById('snowSpeedInput');
 snowSpeedInput.value = SNOW_SPEED;
 snowSpeedInput.addEventListener('change', (e) => {
     SNOW_SPEED = Number(e.target.value)
+})
+
+const shadowsInput = document.getElementById('shadowsInput');
+shadowsInput.checked = SHADOWS;
+shadowsInput.addEventListener('change', (e) => {
+    SHADOWS = Boolean(e.target.checked);
+    ctx.shadowBlur = 0;
 })
